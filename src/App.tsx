@@ -4,8 +4,8 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { CssBaseline, ThemeProvider } from '@material-ui/core';
 
 import CustomTheme from "./theme/custom-theme";
-import Info from "./components/Info";
-import Todo from "./components/Todo";
+import Info from "./pages/Info";
+import Todo from "./pages/Todo";
 
 function App() {
   return (

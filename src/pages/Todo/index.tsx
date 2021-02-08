@@ -2,6 +2,8 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Avatar, Container, CssBaseline, Typography } from '@material-ui/core';
 import { ListAlt } from '@material-ui/icons';
+import TaskList from '../../components/TaskList';
+import TaskForm from '../../components/TaskForm';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -13,10 +15,6 @@ const useStyles = makeStyles((theme) => ({
     avatar: {
       margin: theme.spacing(1),
       backgroundColor: theme.palette.secondary.main,
-    },
-    form: {
-      width: '100%', // Fix IE 11 issue.
-      marginTop: theme.spacing(1),
     }
 }));
 
@@ -33,9 +31,8 @@ const Login: React.FC = () => {
         <Typography component="h1" variant="h5">
           Todo List
         </Typography>
-        <form className={classes.form} noValidate>
-          
-        </form>
+        <TaskForm />
+        <TaskList />
       </div>
     </Container>
   );
