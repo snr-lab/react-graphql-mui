@@ -1,9 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Avatar, Container, CssBaseline, Typography } from '@material-ui/core';
+import { Avatar, Container, CssBaseline, List, ListItem, Paper, Typography } from '@material-ui/core';
 import { ListAlt } from '@material-ui/icons';
-import TaskList from '../../components/TaskList';
 import TaskForm from '../../components/TaskForm';
+import TaskItem from '../../components/TaskItem';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -15,6 +15,18 @@ const useStyles = makeStyles((theme) => ({
     avatar: {
       margin: theme.spacing(1),
       backgroundColor: theme.palette.secondary.main,
+    },
+    listRoot: {
+      marginTop: theme.spacing(1),
+      padding: 0,
+      display: 'flex',
+      width: 400,
+    },
+    list: {
+      width: "100%"
+    },
+    listItem: {
+      padding: 0
     }
 }));
 
@@ -32,7 +44,17 @@ const Login: React.FC = () => {
           Todo List
         </Typography>
         <TaskForm />
-        <TaskList />
+        <Paper className={classes.listRoot}>
+          <List className={classes.list}>
+            {[0, 1, 2, 3].map((value) => {
+              return (
+                <ListItem className={classes.listItem} key={value} role={undefined}>
+                  <TaskItem />
+                </ListItem>
+              );
+            })}
+          </List>
+        </Paper>
       </div>
     </Container>
   );

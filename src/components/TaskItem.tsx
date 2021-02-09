@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
   input: {
     marginLeft: theme.spacing(1),
     flex: 1,
+    padding: '6px 0'
   },
   iconButton: {
     padding: 10,
@@ -35,7 +36,7 @@ const Login: React.FC = () => {
   }
 
   return (
-      <Box className={classes.root}>
+      <Box className={classes.root} tabIndex={-1} onFocus={() => setFocus(true)} onBlur={() => setFocus(false)}>
         <Checkbox 
           checked={checked}
           tabIndex={-1}
@@ -47,12 +48,10 @@ const Login: React.FC = () => {
           className={classes.input}
           placeholder="Add todo"
           inputProps={{ 'aria-label': 'Add todo' }}
-          onFocus={() => setFocus(true)}
-          onBlur={() => setFocus(false)}
         />
-        <IconButton className={classes.iconButton} aria-label="directions" onClick={handleDelete}>
-          {focus && <Close />}
-        </IconButton>
+        {focus && <IconButton className={classes.iconButton} aria-label="directions" onClick={handleDelete}>
+          <Close />
+        </IconButton>}
       </Box>
   );
 }
