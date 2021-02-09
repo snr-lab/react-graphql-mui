@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Login: React.FC = () => {
   const classes = useStyles();
-  const [focus, setFocus] = useState(false);
+  const [hover, setHover] = useState(false);
   const [checked, setChecked] = useState(false);
 
   const handleToggle = () => {
@@ -35,8 +35,12 @@ const Login: React.FC = () => {
     console.log("Delete item");
   }
 
+  const updateItem = () => {
+    console.log("Update Item");
+  }
+
   return (
-      <Box className={classes.root} tabIndex={-1} onFocus={() => setFocus(true)} onBlur={() => setFocus(false)}>
+      <Box className={classes.root} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
         <Checkbox 
           checked={checked}
           tabIndex={-1}
@@ -48,8 +52,9 @@ const Login: React.FC = () => {
           className={classes.input}
           placeholder="Add todo"
           inputProps={{ 'aria-label': 'Add todo' }}
+          onBlur={updateItem}
         />
-        {focus && <IconButton className={classes.iconButton} aria-label="directions" onClick={handleDelete}>
+        {hover && <IconButton className={classes.iconButton} aria-label="directions" onClick={handleDelete}>
           <Close />
         </IconButton>}
       </Box>
