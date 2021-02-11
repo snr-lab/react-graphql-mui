@@ -59,12 +59,9 @@ const TaskItem: React.FC<TodoItemProp> = (props) => {
   const [updateTodo] = useMutation(UPSERT_TODO);
   const [deleteTodo] = useMutation(DELETE_TODO, {
     onCompleted: (data) => {
-      console.log("Delete Success", data);
-    },
-    onError: (error) => {
       onTodoDeleted();
-      console.log("Unfortunately json-graphql-server sennding object instead of boolean", error);
-    }
+    },
+    onError: (error) => {}
 });
   const handleToggle = () => {
     setTaskDone((previousValue: boolean) => {
