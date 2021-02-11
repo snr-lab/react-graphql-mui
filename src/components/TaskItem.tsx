@@ -1,7 +1,33 @@
 import React, { useState } from 'react';
+import { gql, useMutation } from '@apollo/client';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Checkbox, IconButton, InputBase, Paper} from '@material-ui/core';
+import { Box, Checkbox, IconButton, InputBase } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
+import { TodoProp } from '../pages/Todo';
+
+const UPSERT_TODO = gql`mutation (
+  $id: ID!, 
+  $task: String!,
+  $done: Boolean!,
+) {
+  updateTodo(
+      id: $id
+      task: $task
+      done: $done
+  ){
+    id
+    task
+    done
+  }
+}`;
+
+const DELETE_TODO = gql`mutation (
+  $id: ID!,
+) {
+  removeTodo(
+      id: $id
+  )
+}`;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,29 +46,58 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Login: React.FC = () => {
+interface TodoItemProp extends TodoProp {
+  onTodoDeleted: Function
+}
+
+const TaskItem: React.FC<TodoItemProp> = (props) => {
+  const { task, id, done, onTodoDeleted } = props;
   const classes = useStyles();
   const [hover, setHover] = useState(false);
-  const [checked, setChecked] = useState(false);
-
+  const [taskDone, setTaskDone] = useState(done);
+  const [taskTxt, setTaskTxt] = useState(task);
+  const [updateTodo] = useMutation(UPSERT_TODO);
+  const [deleteTodo] = useMutation(DELETE_TODO, {
+    onCompleted: (data) => {
+      console.log("Delete Success", data);
+    },
+    onError: (error) => {
+      onTodoDeleted();
+      console.log("Unfortunately json-graphql-server sennding object instead of boolean", error);
+    }
+});
   const handleToggle = () => {
-    setChecked((previousValue: boolean) => {
+    setTaskDone((previousValue: boolean) => {
+      updateTodo({
+        variables: {
+          id,
+          task: taskTxt,
+          done: !previousValue
+        }
+      });
       return !previousValue;
     });
   }
-
   const handleDelete = () => {
-    console.log("Delete item");
+    deleteTodo({
+      variables: {
+        id
+      }
+    });
   }
-
   const updateItem = () => {
-    console.log("Update Item");
+    updateTodo({
+      variables: {
+        id,
+        task: taskTxt,
+        done: taskDone
+      }
+    });
   }
-
   return (
       <Box className={classes.root} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
         <Checkbox 
-          checked={checked}
+          checked={taskDone}
           tabIndex={-1}
           disableRipple
           inputProps={{ 'aria-labelledby': "id" }}
@@ -50,7 +105,8 @@ const Login: React.FC = () => {
         />
         <InputBase
           className={classes.input}
-          placeholder="Add todo"
+          value = {taskTxt}
+          onChange = {e => setTaskTxt(e.target.value)}
           inputProps={{ 'aria-label': 'Add todo' }}
           onBlur={updateItem}
         />
@@ -61,4 +117,4 @@ const Login: React.FC = () => {
   );
 }
 
-export default Login;
+export default TaskItem;

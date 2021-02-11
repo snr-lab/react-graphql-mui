@@ -1,4 +1,5 @@
 import React from 'react';
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 import { Route, Switch, Redirect } from 'react-router';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { CssBaseline, ThemeProvider } from '@material-ui/core';
@@ -7,9 +8,14 @@ import CustomTheme from "./theme/custom-theme";
 import Info from "./pages/Info";
 import Todo from "./pages/Todo";
 
+const client = new ApolloClient({
+  uri: 'http://localhost:3001',
+  cache: new InMemoryCache()
+});
+
 function App() {
   return (
-    <div>
+    <ApolloProvider client={client}>
       <CssBaseline />
       <ThemeProvider theme={CustomTheme}>
         <Router>
@@ -20,7 +26,7 @@ function App() {
           </Switch>
         </Router>
       </ThemeProvider>
-    </div>
+    </ApolloProvider>
   );
 }
 

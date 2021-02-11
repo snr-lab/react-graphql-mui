@@ -1,7 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { gql, useMutation } from '@apollo/client';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton, InputBase, Paper} from '@material-ui/core';
 import { Add } from '@material-ui/icons';
+
+const UPSERT_TODO = gql`mutation (
+  $id: ID!, 
+  $task: String!,
+  $done: Boolean!,
+) {
+  createTodo(
+      id: $id
+      task: $task
+      done: $done
+  ){
+    id
+    task
+    done
+  }
+}`;
+
+interface TaskFormProps {
+  newTodoId: number,
+  onTodoAdded: Function
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,14 +41,36 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Login: React.FC = () => {
+const TaskForm: React.FC<TaskFormProps> = (props) => {
+  const {newTodoId, onTodoAdded} = props;
   const classes = useStyles();
-
+  const [task, setTask] = useState("");
+  const [addTodo, { loading: adding }] = useMutation(UPSERT_TODO, {
+    onCompleted: (data) => {
+      onTodoAdded(data);
+    },
+    onError: (error) => {}
+});
+  const addNewTodo = (event: React.ChangeEvent<{}>) => {
+    event.preventDefault();
+    if(task !== ""){
+      addTodo({
+        variables: {
+          id: newTodoId,
+          task: task,
+          done: false
+        }
+      });
+      setTask("");
+    }
+  }
   return (
-      <Paper component="form" className={classes.root}>
+      <Paper component="form" className={classes.root} onSubmit={e => addNewTodo(e)}>
         <InputBase
           className={classes.input}
           placeholder="Add todo"
+          value = {task}
+          onChange = {e => setTask(e.target.value)}
           inputProps={{ 'aria-label': 'Add todo' }}
         />
         <IconButton type="submit" color="primary" className={classes.iconButton} aria-label="directions">
@@ -36,4 +80,4 @@ const Login: React.FC = () => {
   );
 }
 
-export default Login;
+export default TaskForm;
