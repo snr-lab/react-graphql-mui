@@ -13,4 +13,3 @@ Start the GraphQL server on localhost, port 3001.
 ```sh
 npm run start-api
 ```
-
