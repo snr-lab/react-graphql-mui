@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Box, Checkbox, IconButton, InputBase } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { TodoProp } from '../pages/Todo';
+import { useAppToast } from '../context-providers/Toast';
 
 const UPSERT_TODO = gql`mutation (
   $id: ID!, 
@@ -52,17 +53,40 @@ interface TodoItemProp extends TodoProp {
 
 const TaskItem: React.FC<TodoItemProp> = (props) => {
   const { task, id, done, onTodoDeleted } = props;
+  const [showToast] = useAppToast();
   const classes = useStyles();
   const [hover, setHover] = useState(false);
   const [taskDone, setTaskDone] = useState(done);
   const [taskTxt, setTaskTxt] = useState(task);
-  const [updateTodo] = useMutation(UPSERT_TODO);
+  const [updateTodo] = useMutation(UPSERT_TODO, {
+    onCompleted: (data) => {
+      showToast({
+        severity: "success",
+        message: "Todo updated successfully"
+      });
+    },
+    onError: (error) => {
+      showToast({
+        severity: "error",
+        message: "Failed to update Todo"
+      });
+    }
+  });
   const [deleteTodo] = useMutation(DELETE_TODO, {
     onCompleted: (data) => {
       onTodoDeleted();
+      showToast({
+        severity: "success",
+        message: "Todo deleted successfully"
+      });
     },
-    onError: (error) => {}
-});
+    onError: (error) => {
+      showToast({
+        severity: "error",
+        message: "Failed to delete Todo"
+      });
+    }
+  });
   const handleToggle = () => {
     setTaskDone((previousValue: boolean) => {
       updateTodo({

@@ -3,6 +3,7 @@ import { gql, useMutation } from '@apollo/client';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton, InputBase, Paper} from '@material-ui/core';
 import { Add } from '@material-ui/icons';
+import { useAppToast } from '../context-providers/Toast';
 
 const UPSERT_TODO = gql`mutation (
   $id: ID!, 
@@ -43,13 +44,23 @@ const useStyles = makeStyles((theme) => ({
 
 const TaskForm: React.FC<TaskFormProps> = (props) => {
   const {newTodoId, onTodoAdded} = props;
+  const [showToast] = useAppToast();
   const classes = useStyles();
   const [task, setTask] = useState("");
   const [addTodo, { loading: adding }] = useMutation(UPSERT_TODO, {
     onCompleted: (data) => {
       onTodoAdded(data);
+      showToast({
+        severity: "success",
+        message: "Todo added successfully"
+      });
     },
-    onError: (error) => {}
+    onError: (error) => {
+      showToast({
+        severity: "error",
+        message: "Failed to add Todo"
+      });
+    }
 });
   const addNewTodo = (event: React.ChangeEvent<{}>) => {
     event.preventDefault();
