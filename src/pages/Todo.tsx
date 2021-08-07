@@ -65,10 +65,10 @@ const Todo: React.FC = () => {
   }
   }, [todoList]);
   const onTodoAdded = (data: TodoProp) => {
-    //refetch();
+    refetch();
   }
   const onTodoDeleted = (id: string | boolean) => {
-    //refetch();
+    refetch();
   }
   return (
     <Box component="main">
