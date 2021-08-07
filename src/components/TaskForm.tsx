@@ -6,12 +6,10 @@ import { Add } from '@material-ui/icons';
 import { useAppToast } from '../context-providers/Toast';
 
 const UPSERT_TODO = gql`mutation (
-  $id: ID!, 
   $task: String!,
   $done: Boolean!,
 ) {
   createTodo(
-      id: $id
       task: $task
       done: $done
   ){
@@ -22,7 +20,6 @@ const UPSERT_TODO = gql`mutation (
 }`;
 
 interface TaskFormProps {
-  newTodoId: number,
   onTodoAdded: Function
 }
 
@@ -43,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TaskForm: React.FC<TaskFormProps> = (props) => {
-  const {newTodoId, onTodoAdded} = props;
+  const {onTodoAdded} = props;
   const [showToast] = useAppToast();
   const classes = useStyles();
   const [task, setTask] = useState("");
@@ -67,7 +64,6 @@ const TaskForm: React.FC<TaskFormProps> = (props) => {
     if(task !== ""){
       addTodo({
         variables: {
-          id: newTodoId,
           task: task,
           done: false
         }

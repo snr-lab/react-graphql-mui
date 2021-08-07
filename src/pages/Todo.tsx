@@ -54,7 +54,6 @@ export interface TodoProp {
 const Todo: React.FC = () => {
   const classes = useStyles();
   const { loading, error, data: todoList, refetch } = useQuery(GET_TODOS);
-  const [newTodoId, setNewTodoId] = useState(0);
   useEffect(() => {
     if(todoList && todoList.allTodos.length > 0){
       const latestItem = todoList.allTodos.reduce((latestItem: TodoProp, currentItem: TodoProp) => {
@@ -63,10 +62,13 @@ const Todo: React.FC = () => {
           }
           return currentItem;
       });
-      setNewTodoId(parseInt(latestItem.id) + 1);
   }
-  }, [todoList, newTodoId]);
-  const onTodoListUpdated = () => {
+  }, [todoList]);
+  console.log("rerender");
+  const onTodoAdded = (data: TodoProp) => {
+    refetch();
+  }
+  const onTodoDeleted = (id: string | boolean) => {
     refetch();
   }
   return (
@@ -80,13 +82,13 @@ const Todo: React.FC = () => {
         <Typography component="h1" variant="h5">
           Todo List
         </Typography>
-        <TaskForm newTodoId={newTodoId} onTodoAdded={onTodoListUpdated} />
+        <TaskForm onTodoAdded={onTodoAdded} />
         <Paper className={classes.listRoot}>
           <List className={classes.list}>
             {todoList && todoList.allTodos.map((todo: TodoProp) => {
               return (
                 <ListItem className={classes.listItem} key={todo.id} role={undefined}>
-                  <TaskItem task={todo.task} id={todo.id} done={todo.done} onTodoDeleted={onTodoListUpdated} />
+                  <TaskItem task={todo.task} id={todo.id} done={todo.done} onTodoDeleted={onTodoDeleted} />
                 </ListItem>
               );
             })}

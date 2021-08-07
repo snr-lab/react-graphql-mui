@@ -27,7 +27,9 @@ const DELETE_TODO = gql`mutation (
 ) {
   removeTodo(
       id: $id
-  )
+  ){
+    id
+  }
 }`;
 
 const useStyles = makeStyles((theme) => ({
@@ -74,7 +76,7 @@ const TaskItem: React.FC<TodoItemProp> = (props) => {
   });
   const [deleteTodo] = useMutation(DELETE_TODO, {
     onCompleted: (data) => {
-      onTodoDeleted();
+      onTodoDeleted(data.removeTodo.id);
       showToast({
         severity: "success",
         message: "Todo deleted successfully"
